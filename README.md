@@ -10,25 +10,28 @@ de conclusão de curso.
 - **Saiba Mais** — Página institucional com a história e valores da empresa
 
 ## Estrutura do Projeto
+## Estrutura do Projeto
 
+```text
 src/
-├── components/           # (Miguel)
+├── components/              # (Miguel)
 │   ├── layout/
-│   │   └── Header.js     # Barra de navegação superior
+│   │   └── Header.js        # Barra de navegação superior
 │   └── shared/
-│       └── Alert.js      # Componente de alerta reutilizável
-├── config/               # (Miguel)
-│   └── constants.js      # Constantes e configurações
-├── pages/                # (Miguel)
-│   ├── LoginPage.js      # Página de login
-│   ├── CadastroPage.js   # Página de cadastro
-│   └── SaibaMaisPage.js  # Página institucional
-├── services/             # (Akila)
-│   └── auth.js           # Lógica de autenticação
-├── storage/              # (Akila)
-│   └── index.js          # Abstração do localStorage
-├── main.js               # (Akila) — Roteador e ponto de entrada
-└── style.css             # (Akila) — Estilos globais
+│       └── Alert.js
+├── config/                  # (Miguel)
+│   └── constants.js         # Constantes e configurações
+├── pages/                   # (Miguel)
+│   ├── LoginPage.js         # Página de login
+│   ├── CadastroPage.js      # Página de cadastro
+│   └── SaibaMaisPage.js     # Página institucional
+├── services/
+│   ├── auth.js              # Lógica de autenticação
+│   └── storage/
+│       └── index.js         # Abstração do localStorage
+├── main.js                  # (Akila) Roteador e ponto de entrada
+└── style.css                # (Akila) Estilos globais
+```
 
 ## Tecnologias
 
