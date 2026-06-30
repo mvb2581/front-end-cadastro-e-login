@@ -46,6 +46,6 @@ src/
 -npm install
 -npm run dev
 ```
-##Autores
+## Autores
 - Miguel — Components, Config, Pages
 - Akila — Services, Storage, Main.js, Style.css
