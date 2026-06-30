@@ -43,8 +43,9 @@ src/
 ## Como Rodar
 
 ```bash
-npm install
-npm run dev
-Autores
+-npm install
+-npm run dev
+```
+##Autores
 - Miguel — Components, Config, Pages
 - Akila — Services, Storage, Main.js, Style.css
