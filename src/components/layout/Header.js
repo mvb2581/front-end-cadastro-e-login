@@ -1,12 +1,22 @@
 import { APP_NAME } from '../../config/constants.js'
+import { auth } from '../../services/auth.js'
 
-const rotas = [
-  { href: '/login', label: 'Login' },
-  { href: '/cadastro', label: 'Cadastro' },
-  { href: '/saiba-mais', label: 'Saiba Mais' },
-]
+function getRotas() {
+  if (auth.estaLogado()) {
+    return [
+      { href: '/saiba-mais', label: 'Saiba Mais' },
+      { href: '#sair', label: 'Sair' },
+    ]
+  }
+  return [
+    { href: '/login', label: 'Login' },
+    { href: '/cadastro', label: 'Cadastro' },
+    { href: '/saiba-mais', label: 'Saiba Mais' },
+  ]
+}
 
 export function Header(rotaAtiva) {
+  const rotas = getRotas()
   const header = document.createElement('header')
   header.className = 'sticky-top border-bottom border-secondary border-opacity-25'
   header.style.backgroundColor = '#0a1628'
@@ -69,6 +79,11 @@ export function Header(rotaAtiva) {
 
     a.addEventListener('click', e => {
       e.preventDefault()
+      if (rota.href === '#sair') {
+        auth.logout()
+        window.dispatchEvent(new CustomEvent('navegar', { detail: '/login' }))
+        return
+      }
       window.dispatchEvent(new CustomEvent('navegar', { detail: rota.href }))
     })
 

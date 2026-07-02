@@ -108,14 +108,14 @@ export function CadastroPage() {
   main.appendChild(container)
   page.appendChild(main)
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault()
     const nome = document.getElementById('cadNome').value
     const email = document.getElementById('cadEmail').value
     const senha = document.getElementById('cadSenha').value
     const cargo = document.getElementById('cadCargo').value
 
-    const result = auth.cadastrar({ nome, email, senha, cargo })
+    const result = await auth.cadastrar({ nome, email, senha, cargo })
 
     if (result.erro) {
       mostrarAlerta(alert, 'erro', result.erro)

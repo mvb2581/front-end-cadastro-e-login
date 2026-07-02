@@ -6,7 +6,14 @@ export const CARGOS = [
 
 export const STORAGE_KEYS = {
   USUARIOS: 'sgr_usuarios',
-  LOGADO: 'sgr_logado',
+  TOKEN: 'sgr_token',
+  RESET_TOKEN: 'sgr_reset_token',
 }
 
 export const APP_NAME = 'SGR'
+
+export const JWT_SECRET = 'sua_chave_secreta_aqui'
+
+export const API_URL = 'http://localhost:3000/api'
+
+export const ROTAS_PUBLICAS = ['/login', '/cadastro', '/esqueci-senha', '/redefinir-senha']

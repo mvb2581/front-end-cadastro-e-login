@@ -1,45 +1,75 @@
 import { storage } from '../storage/index.js'
 import { STORAGE_KEYS } from '../config/constants.js'
+import { api } from './api.js'
+import { jwt } from './crypto.js'
 
 export const auth = {
-  listarUsuarios() {
-    return storage.get(STORAGE_KEYS.USUARIOS) || []
+  estaLogado() {
+    return !!storage.get(STORAGE_KEYS.TOKEN)
   },
 
-  salvarUsuarios(usuarios) {
-    storage.set(STORAGE_KEYS.USUARIOS, usuarios)
-  },
-
-  cadastrar({ nome, email, senha, cargo }) {
-    const usuarios = this.listarUsuarios()
-
-    if (usuarios.find(u => u.email === email)) {
-      return { erro: 'Este e-mail já está cadastrado.' }
+  async cadastrar({ nome, email, senha, cargo }) {
+    try {
+      const data = await api.post('/cadastro', { nome, email, senha, cargo })
+      return { sucesso: true, usuario: data.usuario }
+    } catch (err) {
+      return { erro: err.message }
     }
-
-    const novo = { id: crypto.randomUUID(), nome, email, senha, cargo }
-    usuarios.push(novo)
-    this.salvarUsuarios(usuarios)
-    return { sucesso: true, usuario: novo }
   },
 
-  login(email, senha) {
-    const usuarios = this.listarUsuarios()
-    const usuario = usuarios.find(u => u.email === email && u.senha === senha)
-
-    if (!usuario) {
+  async login(email, senha) {
+    try {
+      const data = await api.post('/login', { email, senha })
+      storage.set(STORAGE_KEYS.TOKEN, data.token)
+      return { sucesso: true, token: data.token, usuario: data.usuario }
+    } catch (err) {
       return { erro: 'E-mail ou senha inválidos.' }
     }
-
-    storage.set(STORAGE_KEYS.LOGADO, usuario)
-    return { sucesso: true, usuario }
   },
 
   logout() {
-    storage.remove(STORAGE_KEYS.LOGADO)
+    storage.remove(STORAGE_KEYS.TOKEN)
   },
 
-  sessao() {
-    return storage.get(STORAGE_KEYS.LOGADO)
+  async sessao() {
+    const token = storage.get(STORAGE_KEYS.TOKEN)
+    if (!token) return null
+
+    try {
+      const data = await api.get('/sessao')
+      return data.usuario
+    } catch {
+      this.logout()
+      return null
+    }
+  },
+
+  sessaoLocal() {
+    const token = storage.get(STORAGE_KEYS.TOKEN)
+    if (!token) return null
+    const payload = jwt.decodificar(token)
+    if (!payload || (payload.exp && payload.exp * 1000 < Date.now())) {
+      this.logout()
+      return null
+    }
+    return { id_usuario: payload.id_usuario, nome: payload.nome, email: payload.email, cargo: payload.cargo }
+  },
+
+  async gerarTokenReset(email) {
+    try {
+      await api.post('/esqueci-senha', { email })
+      return true
+    } catch {
+      return false
+    }
+  },
+
+  async redefinirSenha(token, novaSenha) {
+    try {
+      await api.post('/redefinir-senha', { token, novaSenha })
+      return { sucesso: true }
+    } catch (err) {
+      return { erro: err.message }
+    }
   },
 }

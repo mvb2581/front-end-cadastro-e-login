@@ -2,10 +2,10 @@ import { Header } from '../components/layout/Header.js'
 import { mostrarAlerta } from '../components/shared/Alert.js'
 import { auth } from '../services/auth.js'
 
-export function LoginPage() {
+export function EsqueciSenhaPage() {
   const page = document.createElement('div')
 
-  const header = Header('/login')
+  const header = Header('/esqueci-senha')
   page.appendChild(header)
 
   const main = document.createElement('main')
@@ -32,58 +32,47 @@ export function LoginPage() {
   iconDiv.className = 'text-center mb-3'
   const iconCircle = document.createElement('span')
   iconCircle.className = 'icon-circle'
-  iconCircle.textContent = 'A'
+  iconCircle.textContent = '?'
   iconDiv.appendChild(iconCircle)
 
   const title = document.createElement('h1')
   title.className = 'text-center fw-bold mb-1'
   title.style.cssText = "font-family:'Playfair Display',serif;color:#ffffff;font-size:1.75rem"
-  title.textContent = 'Acessar Sistema'
+  title.textContent = 'Recuperar Senha'
 
   const divider = document.createElement('div')
   divider.className = 'divider-gold my-3'
 
   const subtitle = document.createElement('p')
   subtitle.className = 'text-center text-secondary mb-4'
-  subtitle.textContent = 'Insira suas credenciais para continuar'
+  subtitle.textContent = 'Insira seu e-mail para receber o link de redefinição'
 
   const alert = document.createElement('div')
   alert.className = 'alert d-none'
-  alert.id = 'loginAlert'
+  alert.id = 'resetAlert'
 
   const form = document.createElement('form')
-  form.id = 'loginForm'
+  form.id = 'resetForm'
   form.noValidate = true
 
   const emailGroup = document.createElement('div')
   emailGroup.className = 'mb-3'
   emailGroup.innerHTML = `
-    <label for="loginEmail" class="form-label text-uppercase small fw-semibold text-secondary">E-mail</label>
-    <input type="email" class="form-control form-control-lg bg-dark border-secondary text-light" id="loginEmail" placeholder="seu@email.com" required>
-  `
-
-  const passGroup = document.createElement('div')
-  passGroup.className = 'mb-4'
-  passGroup.innerHTML = `
-    <label for="loginSenha" class="form-label text-uppercase small fw-semibold text-secondary">Senha</label>
-    <input type="password" class="form-control form-control-lg bg-dark border-secondary text-light" id="loginSenha" placeholder="senha" required minlength="6">
+    <label for="resetEmail" class="form-label text-uppercase small fw-semibold text-secondary">E-mail</label>
+    <input type="email" class="form-control form-control-lg bg-dark border-secondary text-light" id="resetEmail" placeholder="seu@email.com" required>
   `
 
   const btn = document.createElement('button')
   btn.type = 'submit'
   btn.className = 'btn btn-lg w-100 border-0 fw-semibold text-uppercase'
   btn.style.cssText = 'background:linear-gradient(135deg,#c9a84c,#a8882e);color:#0a1628;letter-spacing:0.5px'
-  btn.textContent = 'Entrar'
+  btn.textContent = 'Enviar Link'
 
   const footer = document.createElement('div')
   footer.className = 'text-center mt-4 pt-4 border-top border-secondary border-opacity-25'
-  footer.innerHTML = `
-    <p class="text-secondary small mb-2">Ainda não tem conta? <a href="/cadastro" class="fw-semibold text-decoration-none" style="color:#c9a84c">Cadastre-se</a></p>
-    <p class="text-secondary small mb-0"><a href="/esqueci-senha" class="fw-semibold text-decoration-none" style="color:#c9a84c">Esqueci minha senha</a></p>
-  `
+  footer.innerHTML = '<p class="text-secondary small mb-0"><a href="/login" class="fw-semibold text-decoration-none" style="color:#c9a84c">Voltar ao login</a></p>'
 
   form.appendChild(emailGroup)
-  form.appendChild(passGroup)
   form.appendChild(btn)
 
   cardBody.appendChild(iconDiv)
@@ -102,16 +91,11 @@ export function LoginPage() {
 
   form.addEventListener('submit', async e => {
     e.preventDefault()
-    const email = document.getElementById('loginEmail').value
-    const senha = document.getElementById('loginSenha').value
-    const result = await auth.login(email, senha)
+    const email = document.getElementById('resetEmail').value
 
-    if (result.erro) {
-      mostrarAlerta(alert, 'erro', result.erro)
-    } else {
-      mostrarAlerta(alert, 'sucesso', `Bem-vindo, ${result.usuario.nome}!`)
-      setTimeout(() => window.dispatchEvent(new CustomEvent('navegar', { detail: '/saiba-mais' })), 1000)
-    }
+    await auth.gerarTokenReset(email)
+
+    mostrarAlerta(alert, 'sucesso', 'Se o e-mail informado existir em nossa base, você receberá um link de redefinição de senha.')
   })
 
   cardBody.querySelectorAll('a[href]').forEach(a => {
